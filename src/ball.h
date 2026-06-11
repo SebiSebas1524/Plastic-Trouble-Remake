@@ -1,4 +1,5 @@
 #pragma once
+#include <raylib.h>
 
 class Ball
 {
@@ -13,4 +14,5 @@ private:
     int speedX;
     int speedY;
     int radius;
+    Texture2D texture;
 };
