@@ -1,9 +1,17 @@
 #pragma once
+#include "raylib.h"
 
-// Virtual game resolution
-constexpr int kVirtualScreenWidth = 800;
-constexpr int kVirtualScreenHeight = 600;
+constexpr int kVirtualScreenWidth = 900;
+constexpr int kVirtualScreenHeight = 500;
 
-// No more ScaleToWindow — Camera2D handles this automatically
-// All game code works in virtual coordinates (0-800, 0-600)
-// Raylib scales and letterboxes automatically
+inline float GetWindowScale()
+{
+    float scaleX = (float)GetScreenWidth() / kVirtualScreenWidth;
+    float scaleY = (float)GetScreenHeight() / kVirtualScreenHeight;
+    return (scaleX < scaleY) ? scaleX : scaleY;
+}
+
+inline int ScaleToWindow(float virtualCoord)
+{
+    return (int)(virtualCoord * GetWindowScale());
+}

@@ -15,7 +15,7 @@ PowerUp::~PowerUp() {}
 
 void PowerUp::load()
 {
-    // No external asset needed
+    // Add asset
 }
 
 void PowerUp::update(float delta)
@@ -26,7 +26,6 @@ void PowerUp::update(float delta)
 
     applyGravity(delta);
 
-    // Bob effect only when on ground
     if (onGround)
         bobOffset = sinf(elapsed * 3.0f) * 4.0f;
 
@@ -60,26 +59,26 @@ void PowerUp::draw()
     float cy = pos.y + bobOffset + kPowerUpSize / 2.0f;
 
     // Outer glow
-    DrawCircle(cx, cy,
-               (float)kPowerUpSize / 2 + 4, { 255, 200, 50, 80 });
+    DrawCircle(ScaleToWindow(cx), ScaleToWindow(cy),
+               (float)ScaleToWindow(kPowerUpSize / 2.0f + 4), Fade(GOLD, 0.31f));
 
     // Main body
-    DrawCircle(cx, cy,
-               (float)kPowerUpSize / 2, { 255, 180, 0, 240 });
+    DrawCircle(ScaleToWindow(cx), ScaleToWindow(cy),
+               (float)ScaleToWindow(kPowerUpSize / 2.0f), Fade(ORANGE, 0.94f));
 
     // Label
-    int fontSize = 14;
+    int fontSize = ScaleToWindow(14);
     int textW = MeasureText("2x", fontSize);
-    int textX = cx - textW / 2;
-    int textY = cy - fontSize / 2;
+    int textX = ScaleToWindow(cx) - textW / 2;
+    int textY = ScaleToWindow(cy) - fontSize / 2;
     DrawText("2x", textX, textY, fontSize, WHITE);
 
     // Timer bar
     float ratio = 1.0f - (elapsed / lifetime);
-    int barW = kPowerUpSize;
-    int barH = 4;
-    int barX = pos.x;
-    int barY = pos.y + bobOffset + kPowerUpSize + 3;
+    int barW = ScaleToWindow(kPowerUpSize);
+    int barH = ScaleToWindow(4);
+    int barX = ScaleToWindow(pos.x);
+    int barY = ScaleToWindow(pos.y + bobOffset + kPowerUpSize + 3);
     DrawRectangle(barX, barY, (int)(barW * ratio), barH, YELLOW);
 }
 

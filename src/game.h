@@ -10,9 +10,11 @@
 class Game
 {
 public:
+    public:
     void init();
     void tick(float deltaTime);
     void shutdown();
+    void mouseMove(int x, int y) { mousePos = { (float)x, (float)y }; }
 
 private:
     enum LevelType { EASY = 0, MEDIUM, HARD };

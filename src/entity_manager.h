@@ -22,7 +22,7 @@ public:
         SpawnEntry& operator=(const SpawnEntry&) = delete;
     };
 
-    void loadLevel(std::vector<SpawnEntry> entries);
+    void loadLevel(std::vector<SpawnEntry>& entries);
     void update(float delta, float timer, Player& player,
                 Sound& popSound, bool& playerHit, Vector2& dropPowerUpAt);
 

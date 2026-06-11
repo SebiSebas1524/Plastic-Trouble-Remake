@@ -18,14 +18,13 @@ namespace
         DrawTexturePro(texture, src, dst, { 0.0f, 0.0f }, 0.0f, WHITE);
     }
 
-    // Returns the screen-space rect for a texture drawn at virtual position vx, vy
     Rectangle ScaledRect(Texture2D texture, float vx, float vy)
     {
         float scale = GetWindowScale();
         return {
             vx * scale,
             vy * scale,
-            texture.width  * scale,
+            texture.width * scale,
             texture.height * scale
         };
     }
@@ -33,11 +32,9 @@ namespace
     bool IsHovered(Texture2D texture, float vx, float vy, Vector2 mousePos)
     {
         Rectangle r = ScaledRect(texture, vx, vy);
-        return mousePos.x >= r.x && mousePos.x <= r.x + r.width
-            && mousePos.y >= r.y && mousePos.y <= r.y + r.height;
+        return CheckCollisionPointRec(mousePos, r);
     }
 
-    // Virtual position helpers for right/bottom aligned elements
     float RightVX(Texture2D texture, float margin = 5.0f)
     {
         return kVirtualScreenWidth - texture.width - margin;
@@ -79,26 +76,29 @@ Menu::Menu()
 
 Menu::~Menu()
 {
-    UnloadTexture(menuBackground);  UnloadTexture(controlMenu);
-    UnloadTexture(deadMenu);        UnloadTexture(pauseMenu);
+    UnloadTexture(menuBackground);
+    UnloadTexture(controlMenu);
+    UnloadTexture(deadMenu);
+    UnloadTexture(pauseMenu);
     UnloadTexture(winMenu);
-
-    UnloadTexture(startButton1);    UnloadTexture(startButton2);
-    UnloadTexture(exitButton1);     UnloadTexture(exitButton2);
-    UnloadTexture(backButton1);     UnloadTexture(backButton2);
-    UnloadTexture(controlButton1);  UnloadTexture(controlButton2);
-    UnloadTexture(replayButton1);   UnloadTexture(replayButton2);
-    UnloadTexture(menuButton1);     UnloadTexture(menuButton2);
-    UnloadTexture(resumeButton1);   UnloadTexture(resumeButton2);
-
+    UnloadTexture(startButton1);
+    UnloadTexture(startButton2);
+    UnloadTexture(exitButton1);
+    UnloadTexture(exitButton2);
+    UnloadTexture(backButton1);
+    UnloadTexture(backButton2);
+    UnloadTexture(controlButton1);
+    UnloadTexture(controlButton2);
+    UnloadTexture(replayButton1);
+    UnloadTexture(replayButton2);
+    UnloadTexture(menuButton1);
+    UnloadTexture(menuButton2);
+    UnloadTexture(resumeButton1);
+    UnloadTexture(resumeButton2);
     UnloadSound(clickSound);
     UnloadSound(winSound);
     UnloadSound(loseSound);
 }
-
-// ---------------------------------------------------------------------------
-// processButtons — draws buttons, handles hover + click for a whole screen
-// ---------------------------------------------------------------------------
 
 void Menu::processButtons(std::vector<Button>& buttons, Vector2 mousePos)
 {
@@ -112,10 +112,6 @@ void Menu::processButtons(std::vector<Button>& buttons, Vector2 mousePos)
             btn.onClick();
     }
 }
-
-// ---------------------------------------------------------------------------
-// Main dispatcher
-// ---------------------------------------------------------------------------
 
 void Menu::update(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
@@ -131,31 +127,23 @@ void Menu::update(Type& menuType, Vector2 mousePos, bool& inMenu)
     }
 }
 
-// ---------------------------------------------------------------------------
-// Principal menu
-// ---------------------------------------------------------------------------
-
 void Menu::updatePrincipalMenu(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
     DrawTextureFullscreen(menuBackground);
 
     std::vector<Button> buttons = {
-        { startButton1,   startButton2,   360.0f, 220.0f,
+        { startButton1, startButton2, 360.0f, 220.0f,
           [&]{ PlaySound(clickSound); menuType = Type::PLAYS; inMenu = true; } },
 
         { controlButton1, controlButton2, 360.0f, 300.0f,
           [&]{ PlaySound(clickSound); menuType = Type::CONTROLS; inMenu = true; } },
 
-        { exitButton1,    exitButton2,    360.0f, 380.0f,
+        { exitButton1, exitButton2, 360.0f, 380.0f,
           [&]{ PlaySound(clickSound); CloseWindow(); } },
     };
 
     processButtons(buttons, mousePos);
 }
-
-// ---------------------------------------------------------------------------
-// Plays overlay
-// ---------------------------------------------------------------------------
 
 void Menu::updatePlays(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
@@ -176,19 +164,15 @@ void Menu::updatePlays(Type& menuType, Vector2 mousePos, bool& inMenu)
     }
 }
 
-// ---------------------------------------------------------------------------
-// Pause menu
-// ---------------------------------------------------------------------------
-
 void Menu::updatePause(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
     DrawTextureFullscreen(pauseMenu);
 
-    float menuVX   = RightVX(menuButton1);
-    float menuVY   = BottomVY(menuButton1);
+    float menuVX = RightVX(menuButton1);
+    float menuVY = BottomVY(menuButton1);
 
     std::vector<Button> buttons = {
-        { menuButton1,   menuButton2,   menuVX, menuVY,
+        { menuButton1, menuButton2, menuVX, menuVY,
           [&]{ PlaySound(clickSound); menuType = Type::MENU; inMenu = true; } },
 
         { resumeButton1, resumeButton2, 360.0f, 300.0f,
@@ -197,10 +181,6 @@ void Menu::updatePause(Type& menuType, Vector2 mousePos, bool& inMenu)
 
     processButtons(buttons, mousePos);
 }
-
-// ---------------------------------------------------------------------------
-// Controls menu
-// ---------------------------------------------------------------------------
 
 void Menu::updateControls(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
@@ -218,10 +198,6 @@ void Menu::updateControls(Type& menuType, Vector2 mousePos, bool& inMenu)
     if (IsKeyPressed(KEY_ESCAPE))
         menuType = Type::MENU;
 }
-
-// ---------------------------------------------------------------------------
-// Dead menu
-// ---------------------------------------------------------------------------
 
 void Menu::updateDead(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
@@ -242,16 +218,12 @@ void Menu::updateDead(Type& menuType, Vector2 mousePos, bool& inMenu)
         { replayButton1, replayButton2, 360.0f, 300.0f,
           [&]{ played = false; PlaySound(clickSound); menuType = Type::PLAYS; } },
 
-        { menuButton1,   menuButton2,   menuVX, menuVY,
+        { menuButton1, menuButton2, menuVX, menuVY,
           [&]{ played = false; PlaySound(clickSound); menuType = Type::MENU; inMenu = true; } },
     };
 
     processButtons(buttons, mousePos);
 }
-
-// ---------------------------------------------------------------------------
-// Win menu
-// ---------------------------------------------------------------------------
 
 void Menu::updateWin(Type& menuType, Vector2 mousePos, bool& inMenu)
 {
@@ -274,10 +246,10 @@ void Menu::updateWin(Type& menuType, Vector2 mousePos, bool& inMenu)
         { replayButton1, replayButton2, 360.0f, 300.0f,
           [&]{ played = false; PlaySound(clickSound); menuType = Type::PLAYS; } },
 
-        { menuButton1,   menuButton2,   menuVX, menuVY,
+        { menuButton1, menuButton2, menuVX, menuVY,
           [&]{ played = false; PlaySound(clickSound); menuType = Type::MENU; inMenu = true; } },
 
-        { exitButton1,   exitButton2,   exitVX, exitVY,
+        { exitButton1, exitButton2, exitVX, exitVY,
           [&]{ PlaySound(clickSound); CloseWindow(); } },
     };
 

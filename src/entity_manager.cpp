@@ -1,12 +1,13 @@
 #include "entity_manager.h"
 #include "player.h"
+#include "utility.h"
 #include <algorithm>
 #include <cstdlib>
 
 static constexpr float kSplitInvincibleDuration = 0.6f;
 static constexpr int kBubblesPerPowerUp = 5;
 
-void EntityManager::loadLevel(std::vector<SpawnEntry> entries)
+void EntityManager::loadLevel(std::vector<SpawnEntry>& entries)
 {
     pending = std::move(entries);
     active.clear();
